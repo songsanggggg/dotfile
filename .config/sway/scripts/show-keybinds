@@ -1,0 +1,144 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_FILE="$(cd -- "${SCRIPT_DIR}/.." && pwd)/config"
+
+if [[ ! -f "${CONFIG_FILE}" ]]; then
+  printf 'Missing sway config: %s\n' "${CONFIG_FILE}" >&2
+  exit 1
+fi
+
+selected="$(
+  awk '
+    function trim(s) {
+      sub(/^[ \t\r\n]+/, "", s)
+      sub(/[ \t\r\n]+$/, "", s)
+      return s
+    }
+
+    function substitute_vars(s,    name, value, previous) {
+      previous = ""
+      while (s != previous) {
+        previous = s
+        while (match(s, /\$[A-Za-z0-9_]+/)) {
+          name = substr(s, RSTART, RLENGTH)
+          value = (name in vars) ? vars[name] : name
+          s = substr(s, 1, RSTART - 1) value substr(s, RSTART + RLENGTH)
+        }
+      }
+      return s
+    }
+
+    function pretty_key(s,    n, i, part, out, pieces) {
+      s = substitute_vars(s)
+      n = split(s, pieces, /\+/)
+      out = ""
+      for (i = 1; i <= n; i++) {
+        part = pieces[i]
+        if (part == "Mod4") part = "Super"
+        else if (part == "Mod1") part = "Alt"
+        else if (part == "Mod3") part = "Hyper"
+        else if (part == "slash") part = "/"
+        else if (part == "minus") part = "-"
+        else if (part == "plus") part = "+"
+        else if (part == "space") part = "Space"
+        if (out != "") out = out "+"
+        out = out part
+      }
+      return out
+    }
+
+    function mode_prefix() {
+      return current_mode == "" ? "" : current_mode ": "
+    }
+
+    BEGIN {
+      header_cat = "Category"
+      header_key = "Keys"
+      header_act = "Action"
+      cat_w = length(header_cat)
+      key_w = length(header_key)
+      current_mode = ""
+      pending_cat = ""
+      pending_desc = ""
+      row_count = 0
+    }
+
+    /^[ \t]*set[ \t]+\$[A-Za-z0-9_]+[ \t]+/ {
+      name = $2
+      value = $0
+      sub(/^[ \t]*set[ \t]+\$[A-Za-z0-9_]+[ \t]+/, "", value)
+      vars[name] = trim(value)
+      next
+    }
+
+    /^[ \t]*mode[ \t]+"[^"]+"[ \t]*\{/ {
+      current_mode = $0
+      sub(/^[ \t]*mode[ \t]+"/, "", current_mode)
+      sub(/".*/, "", current_mode)
+      next
+    }
+
+    /^[ \t]*}[ \t]*$/ {
+      if (current_mode != "") current_mode = ""
+      next
+    }
+
+    /^[ \t]*##[ \t]*@keybind[ \t]*:/ {
+      meta = $0
+      sub(/^[ \t]*##[ \t]*@keybind[ \t]*:[ \t]*/, "", meta)
+      sep = index(meta, "|")
+      if (sep > 0) {
+        pending_cat = trim(substr(meta, 1, sep - 1))
+        pending_desc = trim(substr(meta, sep + 1))
+      }
+      next
+    }
+
+    /^[ \t]*bindsym[ \t]+/ {
+      if (pending_cat == "" || pending_desc == "") next
+
+      line = $0
+      sub(/^[ \t]*bindsym[ \t]+/, "", line)
+      token_count = split(line, tokens, /[ \t]+/)
+      key_token = ""
+      for (i = 1; i <= token_count; i++) {
+        if (tokens[i] ~ /^--/) continue
+        key_token = tokens[i]
+        break
+      }
+      if (key_token == "") next
+
+      pretty = mode_prefix() pretty_key(key_token)
+      rows[++row_count] = pending_cat "\t" pretty "\t" pending_desc
+      if (length(pending_cat) > cat_w) cat_w = length(pending_cat)
+      if (length(pretty) > key_w) key_w = length(pretty)
+      pending_cat = ""
+      pending_desc = ""
+      next
+    }
+
+    {
+      if ($0 !~ /^[ \t]*#/) {
+        pending_cat = ""
+        pending_desc = ""
+      }
+    }
+
+    END {
+      printf "%-*s  %-*s  %s\n", cat_w, header_cat, key_w, header_key, header_act
+      for (i = 1; i <= row_count; i++) {
+        split(rows[i], cols, "\t")
+        printf "%-*s  %-*s  %s\n", cat_w, cols[1], key_w, cols[2], cols[3]
+      }
+    }
+  ' "${CONFIG_FILE}" | fuzzel --dmenu --prompt 'Keys> ' --placeholder 'Search keybinds' --lines 18 --width 110 --tabs 4 --match-mode fzf --layer overlay --no-sort --counter --mesg 'Generated from ## @keybind: Category | Description'
+)"
+
+[[ -n "${selected}" ]] || exit 0
+
+if command -v wl-copy >/dev/null 2>&1; then
+  printf '%s' "${selected}" | wl-copy
+fi

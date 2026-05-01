@@ -1,0 +1,316 @@
+# Based on the official /etc/sway/config shipped with swayfx 0.5.3
+
+### Variables
+set $mod Mod4
+set $term kitty
+set $menu fuzzel
+set $lock swaylock -f
+
+### Wallpaper
+exec_always ~/.config/sway/scripts/apply-wallpaper
+
+### Autostart
+exec_always dbus-update-activation-environment --all
+exec fcitx5
+exec_always ~/.config/waybar/scripts/restart-waybar
+exec mako
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec nm-applet --indicator
+exec blueman-applet
+exec wl-paste --type text --watch cliphist store
+exec wl-paste --type image --watch cliphist store
+exec swayidle -w \
+    timeout 300 'swaylock -f' \
+    timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
+    before-sleep 'swaylock -f'
+
+### Input
+input type:touchpad {
+    tap enabled
+    tap_button_map lrm
+    drag enabled
+    drag_lock enabled_sticky
+    dwt enabled
+    click_method clickfinger
+    clickfinger_button_map lrm
+    scroll_method two_finger
+    natural_scroll disabled
+    middle_emulation disabled
+    pointer_accel 0.2
+}
+
+### Touchpad gestures
+bindgesture swipe:3:right workspace prev
+bindgesture swipe:3:left workspace next
+bindgesture swipe:4:right workspace prev
+bindgesture swipe:4:left workspace next
+
+### Window appearance
+gaps outer 1
+gaps inner 5
+default_border pixel 3
+
+blur enable
+blur_passes 2
+blur_radius 10
+corner_radius 10
+
+shadows disable
+shadow_blur_radius 10
+
+default_dim_inactive 0.2
+dim_inactive_colors.unfocused #00000000
+dim_inactive_colors.urgent #00000088
+titlebar_separator enable
+
+for_window [class=".*"] opacity 0.9
+
+for_window [app_id="kitty"] {
+    dim_inactive 0.15
+}
+
+for_window [app_id="firefox"] {
+    border pixel 3
+    opacity 0.75
+    dim_inactive 0.25
+}
+
+for_window [app_id="chromium"] {
+    border pixel 3
+}
+
+for_window [app_id="org.gnome.Nautilus"] {
+    floating enable
+    border pixel 3
+}
+
+for_window [app_id="org.gnome.FileRoller"] {
+    floating enable
+    border pixel 3
+}
+
+for_window [app_id="mpv"] {
+    floating enable
+}
+
+for_window [app_id="nm-connection-editor"] {
+    floating enable
+}
+
+for_window [app_id="pavucontrol"] {
+    floating enable
+}
+
+for_window [app_id="blueman-manager"] {
+    floating enable
+}
+
+set $win-bg #a48abfcc
+set $win-bg-inactive #120e1200
+set $win-bg-urgent #d9236588
+set $win-text-light #f2d8e988
+set $win-text-dark #0b0b0b88
+set $win-text-inactive #59485000
+
+client.focused          $win-bg          $win-bg          $win-text-dark      $win-bg          $win-bg
+client.focused_inactive $win-bg-inactive $win-bg-inactive $win-text-inactive  $win-bg-inactive $win-bg-inactive
+client.unfocused        $win-bg-inactive $win-bg-inactive $win-text-inactive  $win-bg-inactive $win-bg-inactive
+client.urgent           $win-bg-urgent   $win-bg-urgent   $win-text-light     $win-bg-urgent   $win-bg-urgent
+client.placeholder      $win-bg-inactive $win-bg-inactive $win-text-inactive  $win-bg-inactive $win-bg-inactive
+
+### Key bindings
+    # Cheatsheet annotation format:
+    # ## @keybind: Category | Description
+
+    ## @keybind: Core | Open kitty
+    bindsym $mod+Return exec $term
+    ## @keybind: Core | Close focused window
+    bindsym $mod+q kill
+    ## @keybind: Core | Open fuzzel launcher
+    bindsym $mod+space exec $menu
+    ## @keybind: Core | Open searchable keybind quick reference
+    bindsym $mod+slash exec ~/.config/sway/scripts/show-keybinds
+    ## @keybind: Core | Lock screen
+    bindsym $mod+l exec $lock
+    ## @keybind: Core | Suspend system
+    bindsym $mod+Shift+l exec systemctl suspend
+    ## @keybind: Core | Download and apply today's Bing wallpaper
+    bindsym $mod+Shift+w exec ~/.config/sway/scripts/update-bing-wallpaper
+    ## @keybind: Clipboard | Area screenshot and open in swappy
+    bindsym $mod+Shift+s exec sh -c 'grim -g "$(slurp)" - | swappy -f -'
+    ## @keybind: Clipboard | Open clipboard history through fuzzel
+    bindsym $mod+v exec sh -c 'cliphist list | fuzzel --dmenu | cliphist decode | wl-copy'
+    ## @keybind: Audio | Open volume controls
+    bindsym $mod+Shift+v exec pavucontrol
+    ## @keybind: Notifications | Dismiss all mako notifications
+    bindsym $mod+Ctrl+n exec makoctl dismiss --all
+
+    floating_modifier $mod normal
+
+    ## @keybind: Core | Reload sway config
+    bindsym $mod+Shift+c reload
+    ## @keybind: Core | Restart Waybar
+    bindsym $mod+Ctrl+b exec ~/.config/waybar/scripts/restart-waybar
+    ## @keybind: Core | Exit sway with confirmation
+    bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+    ## @keybind: Core | Open session menu
+    bindsym Ctrl+Alt+Delete exec wlogout
+
+    ## @keybind: Focus | Move focus left with arrow key
+    bindsym $mod+Left focus left
+    ## @keybind: Focus | Move focus down with arrow key
+    bindsym $mod+Down focus down
+    ## @keybind: Focus | Move focus up with arrow key
+    bindsym $mod+Up focus up
+    ## @keybind: Focus | Move focus right with arrow key
+    bindsym $mod+Right focus right
+
+    ## @keybind: Move | Move focused window left with arrow key
+    bindsym $mod+Shift+Left move left
+    ## @keybind: Move | Move focused window down with arrow key
+    bindsym $mod+Shift+Down move down
+    ## @keybind: Move | Move focused window up with arrow key
+    bindsym $mod+Shift+Up move up
+    ## @keybind: Move | Move focused window right with arrow key
+    bindsym $mod+Shift+Right move right
+
+    ## @keybind: Workspace | Switch to previous workspace
+    bindsym Ctrl+$mod+Left workspace prev
+    ## @keybind: Workspace | Switch to next workspace
+    bindsym Ctrl+$mod+Right workspace next
+    ## @keybind: Workspace | Switch to previous workspace
+    bindsym $mod+Page_Up workspace prev
+    ## @keybind: Workspace | Switch to next workspace
+    bindsym $mod+Page_Down workspace next
+    ## @keybind: Workspace | Move focused window to previous workspace
+    bindsym Ctrl+Shift+$mod+Left move container to workspace prev
+    ## @keybind: Workspace | Move focused window to next workspace
+    bindsym Ctrl+Shift+$mod+Right move container to workspace next
+    ## @keybind: Workspace | Move focused window to previous workspace
+    bindsym $mod+Shift+Page_Up move container to workspace prev
+    ## @keybind: Workspace | Move focused window to next workspace
+    bindsym $mod+Shift+Page_Down move container to workspace next
+
+    ## @keybind: Workspace | Switch to workspace 1
+    bindsym $mod+1 workspace number 1
+    ## @keybind: Workspace | Switch to workspace 2
+    bindsym $mod+2 workspace number 2
+    ## @keybind: Workspace | Switch to workspace 3
+    bindsym $mod+3 workspace number 3
+    ## @keybind: Workspace | Switch to workspace 4
+    bindsym $mod+4 workspace number 4
+    ## @keybind: Workspace | Switch to workspace 5
+    bindsym $mod+5 workspace number 5
+    ## @keybind: Workspace | Switch to workspace 6
+    bindsym $mod+6 workspace number 6
+    ## @keybind: Workspace | Switch to workspace 7
+    bindsym $mod+7 workspace number 7
+    ## @keybind: Workspace | Switch to workspace 8
+    bindsym $mod+8 workspace number 8
+    ## @keybind: Workspace | Switch to workspace 9
+    bindsym $mod+9 workspace number 9
+    ## @keybind: Workspace | Switch to workspace 10
+    bindsym $mod+0 workspace number 10
+
+    ## @keybind: Workspace | Move focused window to workspace 1
+    bindsym $mod+Shift+1 move container to workspace number 1
+    ## @keybind: Workspace | Move focused window to workspace 2
+    bindsym $mod+Shift+2 move container to workspace number 2
+    ## @keybind: Workspace | Move focused window to workspace 3
+    bindsym $mod+Shift+3 move container to workspace number 3
+    ## @keybind: Workspace | Move focused window to workspace 4
+    bindsym $mod+Shift+4 move container to workspace number 4
+    ## @keybind: Workspace | Move focused window to workspace 5
+    bindsym $mod+Shift+5 move container to workspace number 5
+    ## @keybind: Workspace | Move focused window to workspace 6
+    bindsym $mod+Shift+6 move container to workspace number 6
+    ## @keybind: Workspace | Move focused window to workspace 7
+    bindsym $mod+Shift+7 move container to workspace number 7
+    ## @keybind: Workspace | Move focused window to workspace 8
+    bindsym $mod+Shift+8 move container to workspace number 8
+    ## @keybind: Workspace | Move focused window to workspace 9
+    bindsym $mod+Shift+9 move container to workspace number 9
+    ## @keybind: Workspace | Move focused window to workspace 10
+    bindsym $mod+Shift+0 move container to workspace number 10
+
+    ## @keybind: Layout | Horizontal split
+    bindsym $mod+b splith
+    ## @keybind: Layout | Vertical split
+    bindsym $mod+Ctrl+v splitv
+    ## @keybind: Layout | Stacking layout
+    bindsym $mod+Ctrl+s layout stacking
+    ## @keybind: Layout | Tabbed layout
+    bindsym $mod+w layout tabbed
+    ## @keybind: Layout | Toggle split layout
+    bindsym $mod+e layout toggle split
+    ## @keybind: Layout | Toggle fullscreen
+    bindsym $mod+d fullscreen toggle
+    ## @keybind: Layout | Toggle global fullscreen
+    bindsym $mod+f fullscreen toggle global
+    ## @keybind: Layout | Toggle floating
+    bindsym $mod+Alt+space floating toggle
+    ## @keybind: Layout | Pin floating window to every workspace
+    bindsym $mod+p sticky toggle
+    ## @keybind: Focus | Toggle focus between tiling and floating
+    bindsym $mod+Ctrl+space focus mode_toggle
+    ## @keybind: Focus | Focus parent container
+    bindsym $mod+a focus parent
+
+    ## @keybind: Scratchpad | Send focused window to scratchpad
+    bindsym $mod+Alt+s move scratchpad
+    ## @keybind: Scratchpad | Show next scratchpad window
+    bindsym $mod+s scratchpad show
+    ## @keybind: Scratchpad | Send focused window to scratchpad
+    bindsym $mod+Shift+minus move scratchpad
+    ## @keybind: Scratchpad | Show next scratchpad window
+    bindsym $mod+minus scratchpad show
+
+mode "resize" {
+    ## @keybind: Resize | Shrink width with arrow key
+    bindsym Left resize shrink width 10px
+    ## @keybind: Resize | Grow height with arrow key
+    bindsym Down resize grow height 10px
+    ## @keybind: Resize | Shrink height with arrow key
+    bindsym Up resize shrink height 10px
+    ## @keybind: Resize | Grow width with arrow key
+    bindsym Right resize grow width 10px
+
+    ## @keybind: Resize | Leave resize mode
+    bindsym Return mode "default"
+    ## @keybind: Resize | Leave resize mode
+    bindsym Escape mode "default"
+}
+## @keybind: Resize | Enter resize mode
+bindsym $mod+r mode "resize"
+
+### Utilities
+    ## @keybind: Media | Previous track
+    bindsym $mod+Shift+b exec playerctl previous
+    ## @keybind: Media | Play or pause media
+    bindsym $mod+Shift+p exec playerctl play-pause
+    ## @keybind: Media | Next track
+    bindsym $mod+Shift+n exec playerctl next
+    ## @keybind: Audio | Mute output
+    bindsym --locked XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+    ## @keybind: Audio | Volume down 5%
+    bindsym --locked XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+    ## @keybind: Audio | Volume up 5%
+    bindsym --locked XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+    ## @keybind: Audio | Mute microphone
+    bindsym --locked XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
+    ## @keybind: Audio | Play or pause media
+    bindsym --locked XF86AudioPlay exec playerctl play-pause
+    ## @keybind: Audio | Pause media
+    bindsym --locked XF86AudioPause exec playerctl pause
+    ## @keybind: Audio | Next track
+    bindsym --locked XF86AudioNext exec playerctl next
+    ## @keybind: Audio | Previous track
+    bindsym --locked XF86AudioPrev exec playerctl previous
+    ## @keybind: Brightness | Brightness down 5%
+    bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%-
+    ## @keybind: Brightness | Brightness up 5%
+    bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
+    ## @keybind: Clipboard | Full screenshot with grim
+    bindsym Print exec grim
+
+include /etc/sway/config.d/*

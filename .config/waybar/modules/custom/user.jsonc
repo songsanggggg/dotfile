@@ -1,0 +1,10 @@
+{
+	"custom/user": {
+		"format": "󰍜",
+		"min-length": 4,
+		"max-length": 4,
+		"on-click": "~/.config/sway/scripts/show-keybinds",
+		"on-click-right": "~/.config/waybar/scripts/restart-waybar",
+		"tooltip-format": "Left click: keybinds | Right click: restart Waybar"
+	}
+}

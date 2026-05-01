@@ -1,0 +1,7 @@
+{
+	"sway/window": {
+		"format": "{}",
+		"max-length": 80,
+		"tooltip": false
+	}
+}

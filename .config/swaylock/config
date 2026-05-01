@@ -1,0 +1,19 @@
+daemonize
+ignore-empty-password
+show-failed-attempts
+font=Noto Sans CJK SC
+indicator-idle-visible
+indicator-radius=100
+indicator-thickness=8
+inside-color=1e1e2ecc
+ring-color=7287fdff
+key-hl-color=8caaeeff
+line-color=00000000
+separator-color=00000000
+text-color=e6e9efff
+inside-clear-color=a6d189cc
+ring-clear-color=a6d189ff
+inside-ver-color=85c1dccc
+ring-ver-color=85c1dcff
+inside-wrong-color=e78284cc
+ring-wrong-color=e78284ff

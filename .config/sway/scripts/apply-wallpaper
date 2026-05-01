@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+WALLPAPER_DIR="${HOME}/.local/share/wallpapers/bing"
+CURRENT_WALLPAPER="${WALLPAPER_DIR}/current.jpg"
+FALLBACK_WALLPAPER="/usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png"
+
+wallpaper="${CURRENT_WALLPAPER}"
+if [[ ! -f "${wallpaper}" ]]; then
+  wallpaper="${FALLBACK_WALLPAPER}"
+fi
+
+pkill -x swaybg >/dev/null 2>&1 || true
+swaybg -i "${wallpaper}" -m fill >/dev/null 2>&1 &

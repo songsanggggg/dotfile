@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+WALLPAPER_DIR="${HOME}/.local/share/wallpapers/bing"
+CURRENT_WALLPAPER="${WALLPAPER_DIR}/current.jpg"
+TMP_WALLPAPER="${WALLPAPER_DIR}/current.jpg.tmp"
+BING_URL="${BING_URL:-https://dailybing.com/api/v1/today/zh-cn/UHD}"
+
+mkdir -p "${WALLPAPER_DIR}"
+
+cleanup() {
+  rm -f "${TMP_WALLPAPER}"
+}
+
+trap cleanup EXIT
+
+if ! command -v curl >/dev/null 2>&1; then
+  notify-send "Bing Wallpaper" "Missing dependency: curl"
+  exit 1
+fi
+
+curl -fsSL "${BING_URL}" -o "${TMP_WALLPAPER}"
+mv "${TMP_WALLPAPER}" "${CURRENT_WALLPAPER}"
+"${HOME}/.config/sway/scripts/apply-wallpaper"
+
+if command -v notify-send >/dev/null 2>&1; then
+  notify-send "Bing Wallpaper" "Updated wallpaper from DailyBing"
+fi
