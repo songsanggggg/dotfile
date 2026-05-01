@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+STATE_FILE="/tmp/waybar-media-toggle-${UID}"
+
+read_state() {
+	if [[ -f "$STATE_FILE" ]]; then
+		cat "$STATE_FILE"
+	else
+		printf '%s\n' "icon"
+	fi
+}
+
+write_state() {
+	printf '%s\n' "$1" > "$STATE_FILE"
+}
+
+current_media() {
+	local line player status title artist text tooltip class
+
+	line=$(playerctl metadata --format '{{playerName}}|{{status}}|{{title}}|{{artist}}' 2>/dev/null | head -n 1)
+
+	if [[ -z "$line" ]]; then
+		text="󰣇  No media"
+		tooltip="No active MPRIS player\nLeft click: collapse\nMiddle click: previous\nRight click: play/pause"
+		class="media empty"
+	else
+		IFS='|' read -r player status title artist <<< "$line"
+		if [[ -n "$artist" ]]; then
+			text="󰎆  ${title} - ${artist}"
+			tooltip="${player} (${status})\n${title} - ${artist}\nLeft click: collapse\nMiddle click: previous\nRight click: play/pause"
+		else
+			text="󰎆  ${title}"
+			tooltip="${player} (${status})\n${title}\nLeft click: collapse\nMiddle click: previous\nRight click: play/pause"
+		fi
+		class="media"
+	fi
+
+	jq -cn --arg text "$text" --arg tooltip "$tooltip" --arg class "$class" \
+		'{text: $text, tooltip: $tooltip, class: ($class | split(" "))}'
+}
+
+icon_mode() {
+	jq -cn \
+		--arg text "󰣇" \
+		--arg tooltip "Left click: show media\nMiddle click: previous\nRight click: play/pause" \
+		'{text: $text, tooltip: $tooltip, class: ["icon"]}'
+}
+
+toggle_mode() {
+	if [[ "$(read_state)" == "media" ]]; then
+		write_state "icon"
+	else
+		write_state "media"
+	fi
+}
+
+case "${1:-module}" in
+	module)
+		if [[ "$(read_state)" == "media" ]]; then
+			current_media
+		else
+			icon_mode
+		fi
+		;;
+	toggle)
+		toggle_mode
+		;;
+	*)
+		exit 1
+		;;
+esac

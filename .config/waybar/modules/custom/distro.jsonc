@@ -1,6 +1,12 @@
 {
 	"custom/distro": {
-		"format": "󰣇",
-		"tooltip": false
+		"exec": "~/.config/waybar/scripts/media module",
+		"interval": 2,
+		"format": "{}",
+		"return-type": "json",
+		"on-click": "~/.config/waybar/scripts/media toggle",
+		"on-click-middle": "playerctl previous",
+		"on-click-right": "playerctl play-pause",
+		"tooltip": true
 	}
 }

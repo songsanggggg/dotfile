@@ -4,12 +4,15 @@
 		"format-paused": "{status_icon} {title} - {artist}",
 		"tooltip-format": "Playing: {title} - {artist}",
 		"tooltip-format-paused": "Paused: {title} - {artist}",
+		"on-click": "playerctl play-pause",
+		"on-click-middle": "playerctl previous",
+		"on-click-right": "playerctl next",
 		"player-icons": {
 			"default": "󰐊"
 		},
 		"status-icons": {
 			"paused": "󰏤"
 		},
-		"max-length": 1000
+		"max-length": 48
 	}
 }
