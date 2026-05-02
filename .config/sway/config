@@ -128,6 +128,8 @@ client.placeholder      $win-bg-inactive $win-bg-inactive $win-text-inactive  $w
     bindsym $mod+q kill
     ## @keybind: Core | Open fuzzel launcher
     bindsym $mod+space exec $menu
+    ## @keybind: Core | Open Dolphin file manager
+    bindsym $mod+e exec dolphin
     ## @keybind: Core | Open searchable keybind quick reference
     bindsym $mod+slash exec ~/.config/sway/scripts/show-keybinds
     ## @keybind: Core | Lock screen
@@ -242,7 +244,7 @@ client.placeholder      $win-bg-inactive $win-bg-inactive $win-text-inactive  $w
     ## @keybind: Layout | Tabbed layout
     bindsym $mod+w layout tabbed
     ## @keybind: Layout | Toggle split layout
-    bindsym $mod+e layout toggle split
+    bindsym $mod+Ctrl+e layout toggle split
     ## @keybind: Layout | Toggle fullscreen
     bindsym $mod+d fullscreen toggle
     ## @keybind: Layout | Toggle global fullscreen

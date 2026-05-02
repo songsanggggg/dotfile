@@ -9,6 +9,7 @@ This layout now follows the general shortcut style from `end-4/dots-hyprland`, a
 - `Super+/`: open searchable keybind quick reference
 - `Super+Return`: open `kitty`
 - `Super+Space`: open `fuzzel`
+- `Super+e`: open `dolphin`
 - `Super+q`: close focused window
 - `Super+Shift+c`: reload sway config
 - `Super+Ctrl+b`: restart `waybar`
@@ -40,7 +41,7 @@ This layout now follows the general shortcut style from `end-4/dots-hyprland`, a
 - `Super+Ctrl+v`: vertical split
 - `Super+Ctrl+s`: stacking layout
 - `Super+w`: tabbed layout
-- `Super+e`: toggle split layout
+- `Super+Ctrl+e`: toggle split layout
 - `Super+d`: toggle fullscreen
 - `Super+f`: toggle global fullscreen
 - `Super+Alt+Space`: toggle floating
