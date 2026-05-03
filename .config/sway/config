@@ -29,7 +29,7 @@ input type:touchpad {
     tap enabled
     tap_button_map lrm
     drag enabled
-    drag_lock enabled_sticky
+    drag_lock disabled
     dwt enabled
     click_method clickfinger
     clickfinger_button_map lrm
@@ -77,6 +77,18 @@ for_window [app_id="firefox"] {
 
 for_window [app_id="chromium"] {
     border pixel 3
+}
+
+for_window [app_id="microsoft-edge"] {
+    border pixel 3
+    opacity 1
+    blur disable
+}
+
+for_window [class="microsoft-edge"] {
+    border pixel 3
+    opacity 1
+    blur disable
 }
 
 for_window [app_id="org.gnome.Nautilus"] {
