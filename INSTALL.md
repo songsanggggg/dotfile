@@ -39,7 +39,7 @@ curl -sSL https://fcitx5.debuggerx.com/fcitx5_customizer.sh | bash -s -- recomme
 For the `swayfx` + `waybar` part, the script uses `yay` to install:
 
 ```bash
-yay -S --needed swayfx kitty waybar wlogout blueman bluez-utils networkmanager nm-connection-editor pavucontrol libnotify grim slurp wl-clipboard polkit-gnome otf-font-awesome noto-fonts-cjk fuzzel mako swaylock swayidle swaybg network-manager-applet cliphist swappy playerctl brightnessctl fzf pacman-contrib otf-commit-mono-nerd upower
+yay -S --needed swayfx kitty waybar wlogout blueman bluez-utils networkmanager nm-connection-editor pavucontrol thunar tumbler thunar-archive-plugin file-roller gvfs libnotify grim slurp wl-clipboard polkit-gnome otf-font-awesome noto-fonts-cjk fuzzel mako swaylock swayidle swaybg network-manager-applet cliphist swappy playerctl brightnessctl fzf pacman-contrib otf-commit-mono-nerd upower
 ```
 
 The package set is:
@@ -53,6 +53,11 @@ The package set is:
 - `networkmanager`
 - `nm-connection-editor`
 - `pavucontrol`
+- `thunar`
+- `tumbler`
+- `thunar-archive-plugin`
+- `file-roller`
+- `gvfs`
 - `libnotify`
 - `grim`
 - `slurp`

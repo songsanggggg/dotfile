@@ -17,6 +17,11 @@ packages=(
   networkmanager
   nm-connection-editor
   pavucontrol
+  thunar
+  tumbler
+  thunar-archive-plugin
+  file-roller
+  gvfs
   libnotify
   grim
   slurp

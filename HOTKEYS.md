@@ -9,7 +9,7 @@ This layout now follows the general shortcut style from `end-4/dots-hyprland`, a
 - `Super+/`: open searchable keybind quick reference
 - `Super+Return`: open `kitty`
 - `Super+Space`: open `fuzzel`
-- `Super+e`: open `dolphin`
+- `Super+e`: open `thunar`
 - `Super+q`: close focused window
 - `Super+Shift+c`: reload sway config
 - `Super+Ctrl+b`: restart `waybar`
